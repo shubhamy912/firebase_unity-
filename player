@@ -1,0 +1,19 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class player : MonoBehaviour
+{
+
+    public string discount;
+    public string mrp_main;
+
+
+    public player() { }
+
+    public player(string dis, string mrp)
+    {
+        discount = dis;
+        mrp_main = mrp;
+    }
+}
