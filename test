@@ -1,0 +1,58 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+using Firebase;
+using Firebase.Database;
+using Firebase.Unity.Editor;
+
+public class Test : MonoBehaviour {
+
+    public InputField discount, mrp;
+    private player dataa;
+    private string un, pw;
+    float aa, bb;
+    public Text a;
+
+    private string DATA_URL = "https://shoe-4c29a.firebaseio.com/";
+    private DatabaseReference databaseReference;
+    // Use this for initialization
+    void Start () {
+        FirebaseApp.DefaultInstance.SetEditorDatabaseUrl(DATA_URL);
+        //databaseReference = FirebaseDatabase.DefaultInstance.RootReference;
+        databaseReference = FirebaseDatabase.DefaultInstance.GetReference("Users");
+
+    }
+
+
+    public void SaveData()
+    {
+        //Debug.Log(discount.text + " " + mrp.text);
+        //dataa = new player(discount.text, mrp.text);
+        string jsonData = JsonUtility.ToJson(dataa);
+
+        databaseReference.Child("Users").SetRawJsonValueAsync(jsonData);
+    }
+	// Update is called once per frame
+	void Update () {
+        databaseReference.GetValueAsync().ContinueWith(task => {
+            if (task.IsFaulted)
+            {
+                // ERROR HANDLER
+            }
+            else if (task.IsCompleted)
+            {
+                Dictionary<string, object> result = (Dictionary<string, object>)task.Result.Value;
+                un = (string)result["discount"];
+                aa=float.Parse(un);
+                pw = (string)result["mrp_main"];
+                bb = float.Parse(pw);
+                //Debug.Log("Username:" + un + "Password :" + pw);
+                float fin = bb - ((aa * bb) / 100);
+                a.text = "Discount:"+(string)result["discount"]+"\n"+ "MRP: " +(string)result["mrp_main"] + "\n" + "Final Price: " + fin;
+                //Debug.Log(a);
+            }
+        });
+
+    }
+}
